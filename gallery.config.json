@@ -1,0 +1,31 @@
+{
+  "lang": "en",
+  "basePath": "/gallery",
+  "siteUrl": "https://example.com",
+  "title": "Mia & Jonas",
+  "pageTitle": "Mia & Jonas | 1 November 2026 | Event Reportage Photo Gallery",
+  "date": "1 November 2026",
+  "subtitle": "Event Reportage Photo Gallery via {photographer}",
+  "photographer": "@tbx",
+  "photographerUrl": "https://x.com/tbx",
+  "coverFile": "001 - ",
+  "coverFilePortrait": "007 - ",
+  "downloadPrefix": "Mia-Jonas-",
+  "rowScale": 100,
+  "reportName": "Photo Gallery",
+  "texts": {
+    "password": "Password",
+    "open": "Open gallery",
+    "wrongPassword": "Sorry, that password is not right.",
+    "passwordHint": "The password is on your invitation.",
+    "viewPhotos": "View photos",
+    "download": "Download",
+    "downloadTitle": "Download photo",
+    "close": "Close",
+    "prev": "Previous",
+    "next": "Next",
+    "scrollHint": "Scroll one screen further",
+    "photos": "photos",
+    "credit": "Event Reportage Photo Gallery via"
+  }
+}

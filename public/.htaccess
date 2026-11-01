@@ -1,0 +1,20 @@
+Options -Indexes
+DirectoryIndex index.php
+
+# Built gallery is only served through index.php
+<Files "galerie.html">
+  Require all denied
+</Files>
+<Files "_auth.php">
+  Require all denied
+</Files>
+<Files "_config.json">
+  Require all denied
+</Files>
+
+# Never serve photos directly (only via img.php)
+RewriteEngine On
+RewriteRule ^protected/ - [F,L]
+
+# Pretty photo URLs (file name when saving): /foto/full/<prefix>050.jpg -> img.php?f=full/050.jpg
+RewriteRule ^foto/(small|thumb|full)/[^/]*?(\d{3})\.jpg$ img.php?f=$1/$2.jpg [L,QSA]

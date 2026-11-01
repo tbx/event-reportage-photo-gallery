@@ -1,0 +1,26 @@
+{
+  "name": "event-reportage-photo-gallery",
+  "version": "1.0.0",
+  "description": "Password-protected photo gallery for events and weddings: static Astro front end, tiny PHP gate, privacy-friendly statistics with a weekly mail.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "photos": "node scripts/photos.mjs",
+    "dev": "astro dev",
+    "build": "astro build && node scripts/postbuild.mjs",
+    "preview": "astro preview",
+    "serve": "node scripts/test-server.mjs",
+    "deploy:code": "node scripts/deploy.mjs --code",
+    "deploy:photos": "node scripts/deploy.mjs --photos",
+    "originals": "node scripts/originals.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "exiftool-vendored": "^39.0.1",
+    "sharp": "^0.33.0",
+    "ssh2-sftp-client": "^12.1.1"
+  }
+}

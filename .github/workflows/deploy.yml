@@ -1,0 +1,42 @@
+name: Deploy gallery
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'demo-photos/**'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-gallery
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HAS_SFTP: ${{ secrets.SFTP_HOST != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # Uploads the gallery code (index.php, img.php, .htaccess, galerie.html, fonts, assets) to SFTP_REMOTE_DIR.
+      # Skipped until the SFTP secrets are set. The photos are not in the repo; upload them once locally with `npm run deploy:photos`.
+      - run: node scripts/deploy.mjs --code
+        if: env.HAS_SFTP == 'true'
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+          SFTP_PORT: ${{ vars.SFTP_PORT }}
+          SFTP_REMOTE_DIR: ${{ vars.SFTP_REMOTE_DIR }}

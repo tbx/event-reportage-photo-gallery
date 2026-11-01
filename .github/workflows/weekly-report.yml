@@ -1,0 +1,18 @@
+name: Weekly report
+
+# Mondays 06:00 UTC: trigger the statistics mail. GitHub runs schedules with a few minutes of delay.
+# Needs the repository variable STATS_URL (e.g. https://example.com/gallery/stats.php) and the secret STATS_KEY (from _auth.php).
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  mail:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call stats.php?mail=1
+        run: |
+          out=$(curl -fsS --max-time 60 "${{ vars.STATS_URL }}?mail=1&key=${{ secrets.STATS_KEY }}")
+          echo "$out"
+          case "$out" in "Mail sent"*) ;; *) exit 1;; esac

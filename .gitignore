@@ -1,0 +1,15 @@
+.DS_Store
+node_modules/
+dist/
+.astro/
+.env
+.claude/
+
+# generated photos never go into the repo
+public/protected/photos/*
+!public/protected/photos/.gitkeep
+public/protected/photos-changed/
+public/protected/photos-tmp/
+photos-src/
+_Inputs/
+originals/
