@@ -13,7 +13,8 @@
     "serve": "node scripts/test-server.mjs",
     "deploy:code": "node scripts/deploy.mjs --code",
     "deploy:photos": "node scripts/deploy.mjs --photos",
-    "originals": "node scripts/originals.mjs"
+    "originals": "node scripts/originals.mjs",
+    "pages": "node scripts/pages.mjs"
   },
   "dependencies": {
     "astro": "^5.0.0"

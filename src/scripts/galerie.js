@@ -164,7 +164,7 @@ function show(i, dir = 0) {
   big.src = U('full', p);
   counter.textContent = (cur + 1) + '/' + N;
   dl.href = U('full', p, 'dl=1'); dl.download = prefix + p.id + '.jpg';
-  try { navigator.sendBeacon(U('hit', p)); } catch {}            // count the view (stats.php)
+  if (urls.hit) try { navigator.sendBeacon(U('hit', p)); } catch {}   // count the view (stats.php); no beacon in the static demo
   if (dir === 0) hintArrows(); scheduleHint(dir === 0 ? 6000 : 5000);
   if (!saveData) new Image().src = U('full', photos[(cur + 1) % N]);   // preload the next photo
   history.replaceState(null, '', '#' + p.id);

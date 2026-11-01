@@ -18,6 +18,10 @@ A password-protected gallery for photo reportages of events and weddings. Static
 |---|---|---|
 | ![Grid](docs/grid.jpg) | ![Viewer](docs/viewer.jpg) | ![Phone](docs/mobile.jpg) |
 
+## Live demo
+
+A static demo without the password gate runs on GitHub Pages: https://tbx.github.io/event-reportage-photo-gallery/ (the `pages` workflow publishes it on every push; the real thing on a PHP host adds the gate, the statistics and the weekly mail).
+
 ## Quick start
 
 You need Node 22 or newer. The repo ships demo photos so the first build works without any setup.
@@ -84,8 +88,9 @@ scripts/photos.mjs        image pipeline (sharp)
 scripts/deploy.mjs        SFTP upload
 scripts/test-server.mjs   local server that emulates the PHP side
 scripts/originals.mjs     originals package
+scripts/pages.mjs         static demo for GitHub Pages
 demo-photos/              sample photos, see CREDITS.md there
-.github/workflows/        deploy on push, weekly report
+.github/workflows/        deploy on push, weekly report, Pages demo
 ```
 
 ## Texts and language
