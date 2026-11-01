@@ -9,6 +9,7 @@ A password-protected gallery for photo reportages of events and weddings. Static
 - **Guests, not accounts.** One shared password (printed on the invitation or in a QR code with `?pw=...`), remembered for a year. No sign-up, no app.
 - **Fast on phones.** Three image sizes per photo (600, 1200 and 2500 px), a justified grid that loads only what is on screen, and a viewer that shows the preview while the large file decodes.
 - **Feels native.** Swipe between photos with the neighbour following your finger, pinch to zoom, swipe down to close, tap zones for back and forward, keyboard navigation on the desktop.
+- **Brute force is throttled.** Ten wrong passwords from one address block it for ten minutes, and every wrong attempt costs half a second. No database, just a tiny file per address hash.
 - **Photos stay private.** The built page and the photos live behind the gate. Direct links to the files are blocked by `.htaccess`, and the browser gets proper file names when guests save a photo.
 - **Runs anywhere PHP runs.** No database, no framework on the server. Four small PHP files plus the static build. Deploys over SFTP from GitHub Actions on every push.
 - **Statistics without tracking.** A local log with daily rotating visitor hashes, no IP addresses, no cookies beyond the password. A designed weekly report mail with the photo of the week and the most downloaded photo.

@@ -17,6 +17,7 @@
     "password": "Password",
     "open": "Open gallery",
     "wrongPassword": "Sorry, that password is not right.",
+    "tooManyAttempts": "Too many attempts. Please try again in %d minutes.",
     "passwordHint": "The password is on your invitation.",
     "viewPhotos": "View photos",
     "download": "Download",

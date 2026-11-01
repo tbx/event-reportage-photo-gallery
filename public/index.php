@@ -4,12 +4,14 @@ require __DIR__ . '/_auth.php';
 
 if (isset($_GET['pw']) || isset($_POST['pw'])) {
   $pw = trim($_GET['pw'] ?? $_POST['pw'] ?? '');
-  if (gallery_check($pw)) {
+  if ($wait = gallery_rate_blocked()) { http_response_code(429); $error = sprintf(txt('tooManyAttempts', 'Too many attempts. Please try again in %d minutes.'), $wait); }
+  elseif (gallery_check($pw)) {
+    gallery_rate_clear();
     gallery_grant();
     header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));   // drop ?pw= from the URL
     exit;
   }
-  $error = true;
+  else { gallery_rate_fail(); $error = txt('wrongPassword', 'Wrong password.'); }
 }
 
 if (gallery_authed()) {
@@ -48,7 +50,7 @@ $e = fn($s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
   <div class="f">
     <input type="password" name="pw" placeholder="<?= $e(txt('password', 'Password')) ?>" autofocus autocomplete="off">
     <button type="submit"><?= $e(txt('open', 'Open gallery')) ?></button>
-    <?php if (!empty($error)): ?><div class="e"><?= $e(txt('wrongPassword', 'Wrong password.')) ?></div><?php endif; ?>
+    <?php if (!empty($error)): ?><div class="e"><?= $e($error) ?></div><?php endif; ?>
   </div>
   <div class="h"><?= $e(txt('passwordHint', '')) ?></div>
 </form>

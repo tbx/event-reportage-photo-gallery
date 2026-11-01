@@ -19,7 +19,11 @@ const TOKEN = createHmac('sha256', SECRET).update(PASSWORD).digest('hex');
 // HTML part of index.php (after the PHP block); <?= ?> expressions are resolved from the config, the error block by flag.
 const gateHtml = readFileSync(path.join(DIST, 'index.php'), 'utf8').split('?>').slice(1).join('?>');
 const phpExpr = (expr) => { const m = /^(cfg|txt)\('([^']+)'(?:,\s*(?:cfg\('([^']+)'\)|'([^']*)'))?\)$/.exec(expr.replace(/^\$e\((.*)\)$/, '$1').trim()); if (!m) return ''; const v = m[1] === 'txt' ? CFG.texts?.[m[2]] : CFG[m[2]]; return v ?? (m[3] ? CFG[m[3]] : m[4]) ?? ''; };
-const gate = (error) => gateHtml.replace(/<\?php if \(!empty\(\$error\)\): \?>([\s\S]*?)<\?php endif; \?>/, error ? '$1' : '').replace(/<\?=\s*([\s\S]*?)\s*\?>/g, (_, e) => phpExpr(e));
+const gate = (error) => gateHtml.replace(/<\?php if \(!empty\(\$error\)\): \?>([\s\S]*?)<\?php endif; \?>/, error ? '$1' : '').replace(/<\?= \$e\(\$error\) \?>/g, error || '').replace(/<\?=\s*([\s\S]*?)\s*\?>/g, (_, e) => phpExpr(e));
+// Throttle as in _auth.php: 10 failures per address, then blocked for 10 minutes
+const fails = new Map();
+const blocked = (ip) => { const s = fails.get(ip); return s && s.until > Date.now() ? Math.ceil((s.until - Date.now()) / 60000) : 0; };
+const fail = (ip) => { const s = fails.get(ip) || { n: 0 }; s.n++; if (s.n >= 10) s.until = Date.now() + 600000; fails.set(ip, s); };
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.jpg': 'image/jpeg', '.php': 'text/html; charset=utf-8' };
 const cookies = (req) => Object.fromEntries((req.headers.cookie || '').split(';').map(c => c.trim().split('=')).filter(c => c[0]));
@@ -39,10 +43,14 @@ createServer(async (req, res) => {
     let pw = url.searchParams.get('pw');
     if (req.method === 'POST') pw = new URLSearchParams(await readBody(req)).get('pw');
     if (pw !== null) {
+      const ip = req.socket.remoteAddress, wait = blocked(ip);
+      if (wait) return send(res, 429, gate((CFG.texts?.tooManyAttempts || 'Too many attempts. Please try again in %d minutes.').replace('%d', wait)));
       if (pw.trim().toLowerCase() === PASSWORD.toLowerCase()) {
+        fails.delete(ip);
         return send(res, 302, '', { 'Set-Cookie': `${COOKIE}=${TOKEN}; Path=${BASE}/; Max-Age=31536000; HttpOnly; SameSite=Lax`, Location: BASE + '/' });
       }
-      return send(res, 200, gate(true));
+      fail(ip);
+      return send(res, 200, gate(CFG.texts?.wrongPassword || 'Wrong password.'));
     }
     if (authed(req)) return send(res, 200, readFileSync(path.join(DIST, 'galerie.html')), { 'Cache-Control': 'private, no-store' });
     return send(res, 200, gate(false));

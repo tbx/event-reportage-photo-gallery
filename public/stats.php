@@ -163,12 +163,14 @@ if (stats_authed() && isset($_GET['preview'])) {   // preview of the HTML mail i
   header('Content-Type: text/html; charset=UTF-8'); echo $html; exit;
 }
 if (isset($_POST['pw'])) {
-  if (hash_equals(STATS_PASSWORD, trim($_POST['pw']))) {
+  if ($wait = gallery_rate_blocked('stats')) { http_response_code(429); $error = "Too many attempts. Please try again in $wait minutes."; }
+  elseif (hash_equals(STATS_PASSWORD, trim($_POST['pw']))) {
+    gallery_rate_clear('stats');
     setcookie('gallery_stats', stats_token(), ['expires' => time() + 365 * 86400, 'path' => gallery_path(), 'secure' => !empty($_SERVER['HTTPS']), 'httponly' => true, 'samesite' => 'Lax']);
     gallery_grant();   // so the thumbnails on the statistics page load
     header('Location: stats.php'); exit;
   }
-  $error = true;
+  else { gallery_rate_fail('stats'); $error = 'Wrong password.'; }
 }
 $sent = null;
 if (stats_authed() && isset($_POST['sendmail'])) $sent = stats_send_mail(stats_load());
@@ -220,7 +222,7 @@ if (stats_authed() && isset($_POST['sendmail'])) $sent = stats_send_mail(stats_l
   <h1 style="margin-bottom:24px"><?= htmlspecialchars(cfg('title')) ?></h1>
   <input type="password" name="pw" placeholder="Password" autofocus autocomplete="off">
   <button type="submit">Show</button>
-  <?php if (!empty($error)): ?><div class="err" style="font-size:15px">Wrong password.</div><?php endif; ?>
+  <?php if (!empty($error)): ?><div class="err" style="font-size:15px"><?= htmlspecialchars($error) ?></div><?php endif; ?>
 </form>
 <?php exit; endif;
 

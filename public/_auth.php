@@ -31,6 +31,31 @@ function gallery_grant() {
   $_COOKIE[GALLERY_COOKIE] = gallery_token();
 }
 
+// Brute-force throttle: after GALLERY_MAX_FAILS wrong passwords from one address, block it for GALLERY_LOCK_MINUTES minutes.
+// State is a tiny file per address hash in protected/ratelimit/ (no database needed). Every wrong attempt costs half a second.
+const GALLERY_MAX_FAILS    = 10;
+const GALLERY_LOCK_MINUTES = 10;
+function gallery_rate_file($scope) {
+  $dir = __DIR__ . '/protected/ratelimit';
+  if (!is_dir($dir)) @mkdir($dir, 0755, true);
+  if (mt_rand(1, 20) === 1) foreach (glob($dir . '/*.json') ?: [] as $f) if (filemtime($f) < time() - 3600) @unlink($f);   // tidy up now and then
+  return $dir . '/' . $scope . '-' . substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . GALLERY_SECRET), 0, 24) . '.json';
+}
+function gallery_rate_blocked($scope = 'gallery') {   // minutes left in the block, 0 = free
+  $s = json_decode(@file_get_contents(gallery_rate_file($scope)), true) ?: [];
+  return !empty($s['until']) && $s['until'] > time() ? (int)ceil(($s['until'] - time()) / 60) : 0;
+}
+function gallery_rate_fail($scope = 'gallery') {
+  $f = gallery_rate_file($scope);
+  $s = json_decode(@file_get_contents($f), true) ?: [];
+  if (empty($s['since']) || $s['since'] < time() - GALLERY_LOCK_MINUTES * 60) $s = ['n' => 0, 'since' => time()];   // old failures expire
+  $s['n']++;
+  if ($s['n'] >= GALLERY_MAX_FAILS) $s['until'] = time() + GALLERY_LOCK_MINUTES * 60;
+  @file_put_contents($f, json_encode($s), LOCK_EX);
+  usleep(500000);
+}
+function gallery_rate_clear($scope = 'gallery') { @unlink(gallery_rate_file($scope)); }
+
 // Log one event: time;event;photo;visitor-hash. The hash changes daily and cannot be reversed; no IP is stored.
 function gallery_log($event, $id = '') {
   $dir = dirname(GALLERY_LOG);
