@@ -20,7 +20,7 @@ A password-protected gallery for photo reportages of events and weddings. Static
 
 ## Quick start
 
-You need Node 22 or newer. The repo ships 28 demo photos so the first build works without any setup.
+You need Node 22 or newer. The repo ships demo photos so the first build works without any setup.
 
 ```bash
 npm install
@@ -94,7 +94,7 @@ All texts that guests see are in `gallery.config.json` under `texts` and in `lan
 
 ## Credits
 
-- Demo photos from [Lorem Picsum](https://picsum.photos), published on Unsplash under the Unsplash License. See `demo-photos/CREDITS.md`.
+- Demo photos by [@tbx](https://x.com/tbx), for trying the gallery out only. See `demo-photos/CREDITS.md`.
 - Fonts [Jost](https://github.com/indestructible-type/Jost) and [Great Vibes](https://fonts.google.com/specimen/Great+Vibes), both under the SIL Open Font License (see `public/fonts/`).
 - Built with [Astro](https://astro.build) and [sharp](https://sharp.pixelplumbing.com).
 
