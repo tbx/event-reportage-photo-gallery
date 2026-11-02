@@ -9,6 +9,8 @@ on:
 
 jobs:
   mail:
+    # Skipped until the repository variable STATS_URL is set
+    if: vars.STATS_URL != ''
     runs-on: ubuntu-latest
     steps:
       - name: Call stats.php?mail=1
