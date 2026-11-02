@@ -1,13 +1,15 @@
 name: Deploy gallery
 
+# For your own installation on a PHP host. Set the SFTP secrets, then enable the push trigger below
+# (uncomment the push block). In this repository it only runs by hand.
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'demo-photos/**'
   workflow_dispatch:
+  # push:
+  #   branches: [main]
+  #   paths-ignore:
+  #     - '**.md'
+  #     - 'docs/**'
+  #     - 'demo-photos/**'
 
 concurrency:
   group: deploy-gallery

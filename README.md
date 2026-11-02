@@ -53,7 +53,7 @@ The gallery runs on any host with Apache and PHP 8 (`.htaccess` with `mod_rewrit
 
 1. Create a repository from this project and push it.
 2. Add the repository secrets `SFTP_HOST`, `SFTP_USER`, `SFTP_PASSWORD` and the variables `SFTP_PORT` (optional, default 22) and `SFTP_REMOTE_DIR` (optional, default is the base path without the slash, e.g. `gallery`).
-3. Every push to `main` builds and uploads the code: `.htaccess`, `index.php`, `img.php`, `hit.php`, `stats.php`, `_auth.php`, `_config.json`, `galerie.html`, fonts and assets.
+3. In `.github/workflows/deploy.yml` uncomment the `push` trigger. From then on every push to `main` builds and uploads the code: `.htaccess`, `index.php`, `img.php`, `hit.php`, `stats.php`, `_auth.php`, `_config.json`, `galerie.html`, fonts and assets.
 4. Upload the photos once from your machine. Put the same SFTP values into `.env` and run:
 
 ```bash
@@ -68,7 +68,7 @@ The result lives at `https://your-domain/gallery/` (or whatever base path you co
 
 `stats.php` shows visitors, opens, photo views and downloads per day plus the most viewed and most downloaded photos. It has its own password (`STATS_PASSWORD`).
 
-The weekly mail is triggered by the `weekly-report` workflow every Monday. Set the repository variable `STATS_URL` (e.g. `https://your-domain/gallery/stats.php`) and the secret `STATS_KEY` (same value as in `_auth.php`). The mail is HTML with the photos embedded, and `stats.php?preview=1` shows it in the browser when you are logged in.
+The weekly mail is triggered by the `weekly-report` workflow every Monday once you uncomment its `schedule` block. Set the repository variable `STATS_URL` (e.g. `https://your-domain/gallery/stats.php`) and the secret `STATS_KEY` (same value as in `_auth.php`). The mail is HTML with the photos embedded, and `stats.php?preview=1` shows it in the browser when you are logged in.
 
 What is logged: a timestamp, the event (open, view, download), the photo number and a hash of IP address, user agent and the day. The hash changes every day and cannot be reversed. No IP addresses are stored. `stats.php?prune=YYYY-MM-DD&key=STATS_KEY` removes everything before a date (with a backup copy).
 

@@ -1,11 +1,12 @@
 name: Weekly report
 
-# Mondays 06:00 UTC: trigger the statistics mail. GitHub runs schedules with a few minutes of delay.
-# Needs the repository variable STATS_URL (e.g. https://example.com/gallery/stats.php) and the secret STATS_KEY (from _auth.php).
+# For your own installation: triggers the statistics mail every Monday 06:00 UTC (GitHub runs schedules with a few
+# minutes of delay). Needs the repository variable STATS_URL (e.g. https://example.com/gallery/stats.php) and the
+# secret STATS_KEY (from _auth.php). Uncomment the schedule block to activate it; here it only runs by hand.
 on:
-  schedule:
-    - cron: '0 6 * * 1'
   workflow_dispatch:
+  # schedule:
+  #   - cron: '0 6 * * 1'
 
 jobs:
   mail:
